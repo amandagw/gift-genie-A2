@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gift Genie</title>
+
+    <style>
+        body {
+            font-family: Optima, Arial, sans-serif;
+            background-color: #f8f9fb;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            transition: border 0.2s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border: 1px solid #6c63ff;
+        }
+
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            background-color: #6c63ff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #574fd6;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        li {
+            background: #f3f4f8;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 6px;
+        }
+        li {
+            display: flex;
+            align-items: center;
+        gap: 12px;
+        }
+
+        li img {
+            width: 60px;          /* consistent width */
+            height: 60px;         /* consistent height */
+            object-fit: cover;    /* keeps image nicely cropped */
+            border-radius: 8px;   /* slightly rounded corners */
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        // When search button is clicked, grab budget value
+        function search() {
+            var budget = $("#budget_input").val();
+            console.log("Budget: " + budget);
+
+        // Call the backend server URL /search/<budget> to get results
+            $.ajax({
+                  url: `/search/${encodeURIComponent(budget)}`,
+                  method: "GET",
+                  dataType: "json",
+                  success: function (data) {
+                    // Render the results under the list
+                    $("#result_list").empty(); //clear the list
+                    //loop to add results of search to list
+                    for(var i = 0; i < data.length; i++) {
+                        console.log("test: " + data[i].item);
+                        console.log("test: " + data[i].price);
+                        $("#result_list").append(
+                            "<li>"
+                            + data[i].item + ": " + data[i].price
+                            + "<img src='" + data[i].image_url + "'></img>"
+                            + "</li>");
+                    }
+                  },
+                  error: function (xhr, status, err) {
+                    console.error("Error:", status, err, xhr.responseText);
+                  }
+                });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Gift Genie</h1>
+
+        <div class="search-row">
+            <input id="budget_input" type="text" placeholder="Enter your budget (e.g 10)">
+            <button onclick="search()">Search</button>
+        </div>
+
+        <ul id="result_list"></ul>
+    </div>
+</body>
+</html>
